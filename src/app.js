@@ -1,9 +1,14 @@
-import './components/Menu/menu.js';
+'use strict';
 
-(function () {
-    'use strict';
-    
-    const Menu = window.Menu;
-    var menu = new Menu();
-})();
+import Menu from './components/Menu/menu.js';
+
+class App {
+    constructor() {
+        this.menu = new Menu({
+
+        });
+    }
+}
+
+let app = new App();
 
