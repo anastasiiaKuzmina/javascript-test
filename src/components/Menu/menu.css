@@ -17,16 +17,32 @@
     padding: 10px 0;
 }
 
-.icon-remove {
-    color: red;
+i {
     cursor: pointer;
     display: inline-block;
-    margin-left: 50px;
+    margin-left: 20px;
+}
+
+.icon-remove {
+    color: red;
 }
 
 .icon-remove:before {
     content: 'x';
 }
+
+.icon-edit {
+    color: blue;
+}
+
+.icon-save {
+    color: blue;
+    margin-left: 10px;
+}
+
+/*.icon-edit:before {*/
+    /*content: '&#9998';*/
+/*}*/
 
 .form-inline > * {
     display: inline-block;
@@ -58,4 +74,18 @@
     background-color: #4192db;
     border-color: #4192db;
     color: #fff;
+}
+
+.text-field {
+    border: 1px solid #000;
+    height: 30px;
+    padding: 0 10px;
+}
+
+.list-item-edit {
+    display: none;
+}
+
+.hide {
+    display: none;
 }

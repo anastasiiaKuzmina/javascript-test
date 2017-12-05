@@ -5,15 +5,20 @@ import Styles from './menu.css';
 let data = {
     items: [
         {
+            id: 1,
             title: 'mail.ru'
         },
         {
+            id: 2,
             title: 'yandex.ru'
         },
         {
+            id: 3,
             title: 'google.com'
         },
-    ]
+    ],
+
+    id: 4
 };
 
 class Menu {
@@ -29,6 +34,17 @@ class Menu {
     init() {
         this.bindBtn();
         this.remove();
+        this.edit()
+    }
+
+    getElements(selector, method) {
+        let elements = document.querySelectorAll(selector);
+        for(let i = 0; i < elements.length; i++) {
+            let editIconItem = elements[i];
+            editIconItem.addEventListener('click', function() {
+                method(this);
+            });
+        }
     }
 
     /**
@@ -36,8 +52,10 @@ class Menu {
      */
 
     addItem(item) {
-        data.items.push({title: item});
+        data.items.push({id: data.id++,title: item});
         this.render();
+        this.remove();
+        this.edit();
     }
 
     /**
@@ -47,20 +65,10 @@ class Menu {
     bindBtn() {
         this.btnClick.addEventListener('click', () => {
             let inputValue = this.inputSimple.value;
-            this.addItem(inputValue);
-            this.inputSimple.value = '';
-        });
-    }
-
-    /**
-     * Bind removeItem method to the every button remove
-     * @param  {Object} item
-     */
-
-    bindEvent(item) {
-        let _this = this;
-        item.addEventListener('click', function() {
-            return _this.removeItem(this);
+            if(inputValue) {
+                this.addItem(inputValue);
+                this.inputSimple.value = '';
+            }
         });
     }
 
@@ -70,24 +78,66 @@ class Menu {
      */
 
     removeItem(item) {
-        let removeParentItem = item.parentNode;
-        this.menu.removeChild(removeParentItem);
+        let itemID = item.getAttribute("data-index");
+        data.items = data.items.filter(i => i.id != itemID);
+        this.render();
+        this.remove();
+        this.edit();
     }
 
     remove() {
-        let removeIcon = document.querySelector('.icon-remove');
-        this.bindEvent(removeIcon);
+        this.getElements('.icon-remove', this.removeItem.bind(this));
+    }
+
+    editItem(item) {
+        let itemID = item.getAttribute("data-index");
+        let itemText = document.querySelector(item.getAttribute("data-text"));
+        let itemEditField = document.querySelector(item.getAttribute("data-edit"));
+        let btnSave = document.querySelector(item.getAttribute("data-save")) ;
+        let inputText = document.getElementById(item.getAttribute("data-input")) ;
+        let _this = this;
+
+        itemText.style.display = "none";
+        itemEditField.style.display = "inline-block";
+
+        btnSave.addEventListener('click', function() {
+            let inputTextValue = inputText.value;
+            if(inputTextValue) {
+                itemText.style.display = 'inline-block';
+                itemEditField.style.display = 'none';
+
+                data.items = data.items.map((elem) => {
+                    if(elem.id === Number(itemID)) {
+                        elem.title = inputTextValue;
+                    }
+                    return elem;
+                });
+                _this.render();
+                _this.edit();
+                _this.remove();
+            }
+        });
+
+    }
+
+    edit() {
+        this.getElements('.icon-edit', this.editItem.bind(this));
     }
 
     /**
      * Render HTML
      */
 
-    generateItemHTML(item, index) {
+    generateItemHTML(item) {
         return `
-            <li class="list-item" data-index="${index}">
-                ${item.title}
-                <i class="icon-remove" data-action="remove"></i>	
+            <li class="list-item">
+                <span class="list-item-text" id="item-text-${item.id}">${item.title}</span>
+                <span class="list-item-edit" id="item-edit-${item.id}">
+                    <input type="text" class="text-field" id="input-text-${item.id}">
+                    <i class="icon-save" data-index="${item.id}" id="item-save-${item.id}">Save</i>
+                </span>
+                <i class="icon-remove" data-index="${item.id}" id="item-save-${item.id}"></i>
+                <i class="icon-edit" data-text="#item-text-${item.id}" data-edit="#item-edit-${item.id}" data-save="#item-save-${item.id}" data-input="input-text-${item.id}" data-index="${item.id}">Edit</i>
             </li>`;
     }
 
